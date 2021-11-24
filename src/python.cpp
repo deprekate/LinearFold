@@ -25,7 +25,6 @@ typedef struct {
 	unsigned int len;
 	unsigned int i;
 	unsigned int f;
-	float gc;
 } windows_Iterator;
 
 PyObject* windows_Iterator_iter(PyObject *self){
@@ -59,8 +58,6 @@ static PyTypeObject IterableType = {
 };
 
 static PyObject * get_windows(PyObject *self, PyObject *args){
-	unsigned int i;
-	unsigned int nuc[5] = {0};
 	windows_Iterator *p;
 	p = PyObject_New(windows_Iterator, &IterableType);
 	if (!p) return NULL;
@@ -68,15 +65,13 @@ static PyObject * get_windows(PyObject *self, PyObject *args){
 		return NULL;
 	}
 	if (!PyArg_ParseTuple(args, "s", &p->dna)) {
-	//if (!PyArg_ParseTuple(args, "s#", &p->dna, &p->len)) {
 		return NULL;
 	}
 	
 	p->i = 0;
 	p->f = 1;
 	p->len = strlen( (const char*) p->dna);
-	nuc[0] = 1;
-	for (i=0; p->dna[i] ; i++){
+	for (int i=0; p->dna[i] ; i++){
 	}
 
 	/* I'm not sure if it's strictly necessary. */
@@ -122,20 +117,20 @@ static PyObject* no_args(PyObject *self, PyObject *args) {
 }
 
 // Method definition object for this extension, these argumens mean:
-static PyMethodDef windows_methods[] = { 
-	{"get_windows",    get_windows, METH_VARARGS, "Gets the aminoacid frequency windows."},  
+static PyMethodDef LinearFold_methods[] = { 
+	{"get_windows",    get_windows, METH_VARARGS, "Empty for now, can be used to yield a python iterator."},  
 	{"mfe",            mfe,         METH_VARARGS, "Calculates the minimum free energy of the sequence."},  
 	{"no_args",        no_args,     METH_NOARGS,  "Empty for now."},  
 	{NULL, NULL, 0, NULL}
 };
 
 // Module definition
-static struct PyModuleDef windows_definition = { 
+static struct PyModuleDef LinearFold_definition = { 
 	PyModuleDef_HEAD_INIT,
-	"windows",
+	"LinearFold",
 	"A Python module that does RNA folding.",
 	-1, 
-	windows_methods
+	LinearFold_methods
 };
 
 // Module initialization
@@ -144,7 +139,7 @@ static struct PyModuleDef windows_definition = {
 // the name keyword argument in setup.py's setup() call.
 PyMODINIT_FUNC PyInit_LinearFold(void) {
 	//Py_Initialize();
-	return PyModule_Create(&windows_definition);
+	return PyModule_Create(&LinearFold_definition);
 }
 
 
