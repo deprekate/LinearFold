@@ -48,11 +48,11 @@ static void Iter_dealloc(windows_Iterator *self){ PyObject_Del(self); }
 static PyTypeObject IterableType = {
 	PyVarObject_HEAD_INIT(NULL, 0)
 	.tp_name = "Iter",
-	.tp_doc = "Custom objects",
 	.tp_basicsize = sizeof(windows_Iterator),
 	.tp_itemsize = 0,
-	.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
 	.tp_dealloc = (destructor) Iter_dealloc,
+	.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+	.tp_doc = "Custom objects",
 	.tp_iter	  = windows_Iterator_iter,
 	.tp_iternext  = windows_Iterator_iternext
 };
