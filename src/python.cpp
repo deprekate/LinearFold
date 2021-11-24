@@ -83,32 +83,36 @@ static PyObject * get_windows(PyObject *self, PyObject *args){
 	return (PyObject *)p;
 }
 
-static PyObject* mfe(PyObject *self, PyObject *args) {
-    int beamsize = 100;
-    bool sharpturn = false;
-    bool is_verbose = false;
-    bool is_eval = false;
-    bool is_constraints = false; // lisiz, add constraints
-    bool zuker_subopt = false;
-    float energy_delta = 5.0;
-    string shape_file_path = "";
+static PyObject* fold(PyObject *self, PyObject *args, PyObject *kwargs){
+	int beamsize = 100;
+	bool sharpturn = false;
+	bool is_verbose = false;
+	bool is_eval = false;
+	bool is_constraints = false; // lisiz, add constraints
+	bool zuker_subopt = false;
+	float energy_delta = 5.0;
 
 	// could not figure out how to dump args directly into a std::string
-	char *char_array;
-	if(!PyArg_ParseTuple(args, "s", &char_array )) {
+	char *seq_char;
+	char *shape_file_path_char = "";
+	static char *kwlist[] = {"seq_char", "beamsize", "sharpturn", "is_verbose", "is_eval", "is_constraints", 
+						     "zuker_subopt", "energy_delta", "shape_file_path_char", NULL};
+	if(!PyArg_ParseTupleAndKeywords(args, kwargs, "s|ipppppfs", kwlist, &seq_char, 
+				                    &beamsize, &sharpturn, &is_verbose, &is_eval, &is_constraints, &zuker_subopt, &energy_delta, shape_file_path_char )) {
 		return NULL;
 	}
-	string seq = char_array;
+	string seq = seq_char;
+	string shape_file_path = shape_file_path_char;
 
-    // convert to uppercase
-    transform(seq.begin(), seq.end(), seq.begin(), ::toupper);
-    // convert T to U
-    replace(seq.begin(), seq.end(), 'T', 'U');
-    // lhuang: moved inside loop, fixing an obscure but crucial bug in initialization
-    BeamCKYParser parser(beamsize, !sharpturn, is_verbose, false, zuker_subopt, energy_delta, shape_file_path);
-    BeamCKYParser::DecoderResult result = parser.parse(seq, NULL);
-    printf("%s\n", result.structure.c_str());
-	return Py_BuildValue("f",  result.score / -100.0);
+	// convert to uppercase
+	transform(seq.begin(), seq.end(), seq.begin(), ::toupper);
+	// convert T to U
+	replace(seq.begin(), seq.end(), 'T', 'U');
+	// lhuang: moved inside loop, fixing an obscure but crucial bug in initialization
+	BeamCKYParser parser(beamsize, !sharpturn, is_verbose, false, zuker_subopt, energy_delta, shape_file_path);
+	BeamCKYParser::DecoderResult result = parser.parse(seq, NULL);
+	
+	return Py_BuildValue("[sf]", result.structure.c_str(), result.score / -100.0);
 }
 
 // Module method definitions
@@ -118,9 +122,9 @@ static PyObject* no_args(PyObject *self, PyObject *args) {
 
 // Method definition object for this extension, these argumens mean:
 static PyMethodDef LinearFold_methods[] = { 
-	{"get_windows",    get_windows, METH_VARARGS, "Empty for now, can be used to yield a python iterator."},  
-	{"mfe",            mfe,         METH_VARARGS, "Calculates the minimum free energy of the sequence."},  
-	{"no_args",        no_args,     METH_NOARGS,  "Empty for now."},  
+	{"get_windows",         get_windows, METH_VARARGS,                 "Empty for now, can be used to yield a python iterator."},  
+	{"fold",        (PyCFunction)  fold, METH_VARARGS | METH_KEYWORDS, "Calculates the minimum free energy of the sequence."},  
+	{"no_args",                 no_args, METH_NOARGS,                  "Empty for now."},  
 	{NULL, NULL, 0, NULL}
 };
 
