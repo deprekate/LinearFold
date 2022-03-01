@@ -46,7 +46,7 @@ To import and use in other python code:
 import LinearFold as lf
 print(lf.fold('UGAGUUCUCGAUCUCUAAAAUCG'))
 ```
-And the output is:
+And the output is a tuple containing the predicted structure and mfe:
 ```
 ['.(((........)))........', -1.8]
 ```
