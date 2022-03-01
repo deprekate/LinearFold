@@ -37,9 +37,17 @@ cat SEQ_OR_FASTA_FILE | ./linearfold [OPTIONS]
 Both FASTA format and pure-sequence format are supported for input.
 
 ## Run as a python module available through pypi/pip
+To install:
 ```
 pip install LinearFold
-python3 -c "import LinearFold as lf; print(lf.fold('UGAGUUCUCGAUCUCUAAAAUCG'))"
+```
+To import and use in other python code:
+```
+import LinearFold as lf
+print(lf.fold('UGAGUUCUCGAUCUCUAAAAUCG'))
+```
+And the output is:
+```
 ['.(((........)))........', -1.8]
 ```
 
